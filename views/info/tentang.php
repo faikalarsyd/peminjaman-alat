@@ -1,0 +1,4 @@
+<?php $title='NambutApp';require __DIR__.'/../layouts/header.php';require __DIR__.'/../layouts/navbar.php';require __DIR__.'/../layouts/sidebar.php';?>
+<main class="content">
+<div class="page-head"><h1>Tentang Aplikasi</h1><p>NambutApp</p></div><div class="card"><p>NambutApp adalah aplikasi peminjaman alat berbasis PHP Native, MySQL/MariaDB, HTML, CSS, dan JavaScript yang dibuat untuk memenuhi tugas Pengembangan Aplikasi Peminjaman Alat.</p><p>Antarmuka mengikuti karakter desain PDF acuan: sidebar kiri, navbar biru, kartu membulat, form dan tabel, ikon, serta modal logout.</p></div>
+</main><?php require __DIR__.'/../layouts/footer.php';?>

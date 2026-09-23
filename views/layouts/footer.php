@@ -1,0 +1,1 @@
+<div class="modal" id="logoutModal"><div class="modal-box"><div class="modal-icon">↪</div><h2>Log out</h2><p>Apakah anda yakin ingin keluar dari aplikasi NambutApp?</p><div class="modal-actions"><button class="btn" data-close-modal>Batal</button><a class="btn btn-primary" href="<?=base_url('logout')?>">Log out</a></div></div></div></body></html>

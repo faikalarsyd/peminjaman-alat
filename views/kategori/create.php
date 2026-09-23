@@ -1,0 +1,4 @@
+<?php $title='NambutApp';require __DIR__.'/../layouts/header.php';require __DIR__.'/../layouts/navbar.php';require __DIR__.'/../layouts/sidebar.php';?>
+<main class="content">
+<div class="page-head"><h1><?=isset($item)?'Edit':'Input'?> Kategori</h1><p>tambah atau ubah data kategori</p></div><?php if($error):?><div class="alert"><?=e($error)?></div><?php endif;?><form class="card form-card" method="post"><input type="hidden" name="_csrf" value="<?=csrf_token()?>"><div class="form-grid"><div class="field full"><label>Nama Kategori</label><input class="input" name="nama_kategori" value="<?=e($item['nama_kategori']??'')?>" required></div><div class="field full"><label>Deskripsi</label><textarea class="textarea" name="deskripsi"><?=e($item['deskripsi']??'')?></textarea></div></div><div class="form-actions"><button class="btn" type="reset">Reset</button><button class="btn btn-primary">Simpan</button></div></form>
+</main><?php require __DIR__.'/../layouts/footer.php';?>

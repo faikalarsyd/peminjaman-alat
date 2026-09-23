@@ -1,0 +1,1 @@
+<?php require_once __DIR__.'/../config/database.php';require_once __DIR__.'/../helpers/auth.php';require_once __DIR__.'/../models/LogAktivitas.php';class LogController{public function index(){require_role('admin');$logs=(new LogAktivitas(Database::getConnection()))->all();require __DIR__.'/../views/log/index.php';}}
