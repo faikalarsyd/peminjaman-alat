@@ -35,19 +35,20 @@ class Pengembalian
 
     private function calculateFine(string $planned, string $actual): array
     {
-        $s = $this->db->prepare("SELECT CAST(nilai AS DECIMAL(12,2)) FROM pengaturan WHERE kunci='denda_per_hari' LIMIT 1");
+        $s = $this->db->prepare("SELECT CAST(nilai AS DECIMAL(12,2)) FROM pengaturan WHERE kunci='denda_per_jam' LIMIT 1");
         $s->execute();
         $tarif = $s->fetchColumn();
-        $tarif = $tarif === false ? 5000.0 : (float)$tarif;
+        $tarif = $tarif === false ? 208.33 : (float)$tarif;
 
         $plannedTime = strtotime($planned);
         $actualTime = strtotime($actual);
-        $days = 0;
+        $hours = 0;
         if ($plannedTime !== false && $actualTime !== false && $actualTime > $plannedTime) {
-            $days = (int)floor(($actualTime - $plannedTime) / 86400);
+            // Any started hour beyond the deadline is charged as one full hour.
+            $hours = (int)ceil(($actualTime - $plannedTime) / 3600);
         }
 
-        return array($days, $days * $tarif);
+        return array($hours, round($hours * $tarif, 2));
     }
 
     public function create(array $d): int
@@ -70,12 +71,12 @@ class Pengembalian
                 throw new RuntimeException('Pengajuan pengembalian untuk transaksi ini sudah ada.');
             }
 
-            list($days, $fine) = $this->calculateFine($loan['tanggal_kembali_rencana'], $d['tanggal_pengembalian']);
-            $s = $this->db->prepare('INSERT INTO pengembalian(peminjaman_id,tanggal_pengembalian,terlambat_hari,denda,kondisi_alat,catatan,diproses_oleh,status) VALUES(?,?,?,?,?,?,?,?)');
+            list($hours, $fine) = $this->calculateFine($loan['tanggal_kembali_rencana'], $d['tanggal_pengembalian']);
+            $s = $this->db->prepare('INSERT INTO pengembalian(peminjaman_id,tanggal_pengembalian,terlambat_jam,denda,kondisi_alat,catatan,diproses_oleh,status) VALUES(?,?,?,?,?,?,?,?)');
             $s->execute(array(
                 $d['peminjaman_id'],
                 $d['tanggal_pengembalian'],
-                $days,
+                $hours,
                 $fine,
                 $d['kondisi_alat'],
                 $d['catatan'],
@@ -164,9 +165,9 @@ class Pengembalian
                 throw new RuntimeException('Hanya pengembalian yang masih menunggu yang dapat diedit.');
             }
 
-            list($days, $fine) = $this->calculateFine($return['tanggal_kembali_rencana'], $d['tanggal_pengembalian']);
-            $s = $this->db->prepare('UPDATE pengembalian SET tanggal_pengembalian=?,terlambat_hari=?,denda=?,kondisi_alat=?,catatan=? WHERE id=? AND status="MENUNGGU"');
-            $s->execute(array($d['tanggal_pengembalian'], $days, $fine, $d['kondisi_alat'], $d['catatan'], $id));
+            list($hours, $fine) = $this->calculateFine($return['tanggal_kembali_rencana'], $d['tanggal_pengembalian']);
+            $s = $this->db->prepare('UPDATE pengembalian SET tanggal_pengembalian=?,terlambat_jam=?,denda=?,kondisi_alat=?,catatan=? WHERE id=? AND status="MENUNGGU"');
+            $s->execute(array($d['tanggal_pengembalian'], $hours, $fine, $d['kondisi_alat'], $d['catatan'], $id));
             $this->db->commit();
         } catch (Throwable $e) {
             if ($this->db->inTransaction()) {

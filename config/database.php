@@ -1,18 +1,33 @@
 <?php
 require_once __DIR__ . '/config.php';
 
-// Konfigurasi default cocok untuk XAMPP dan AWeb Server yang memakai
-// MySQL/MariaDB lokal dengan user root tanpa password.
+// Opsional: salin database.local.example.php menjadi database.local.php
+// lalu sesuaikan jika host, port, nama database, atau kredensial berbeda.
 $localConfig = __DIR__ . '/database.local.php';
 if (is_file($localConfig)) {
-    require $localConfig;
+    require_once $localConfig;
 }
 
-if (!defined('DB_HOST')) define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
-if (!defined('DB_PORT')) define('DB_PORT', getenv('DB_PORT') ?: '3306');
-if (!defined('DB_NAME')) define('DB_NAME', getenv('DB_NAME') ?: 'db_peminjaman_alat');
-if (!defined('DB_USER')) define('DB_USER', getenv('DB_USER') ?: 'root');
-if (!defined('DB_PASS')) define('DB_PASS', getenv('DB_PASS') !== false ? getenv('DB_PASS') : '');
+if (!defined('DB_HOST')) {
+    $envHost = getenv('DB_HOST');
+    define('DB_HOST', ($envHost !== false && $envHost !== '') ? $envHost : '127.0.0.1');
+}
+if (!defined('DB_PORT')) {
+    $envPort = getenv('DB_PORT');
+    define('DB_PORT', ($envPort !== false && $envPort !== '') ? $envPort : '3306');
+}
+if (!defined('DB_NAME')) {
+    $envName = getenv('DB_NAME');
+    define('DB_NAME', ($envName !== false && $envName !== '') ? $envName : 'db_peminjaman_alat');
+}
+if (!defined('DB_USER')) {
+    $envUser = getenv('DB_USER');
+    define('DB_USER', ($envUser !== false && $envUser !== '') ? $envUser : 'root');
+}
+if (!defined('DB_PASS')) {
+    $envPassword = getenv('DB_PASS');
+    define('DB_PASS', $envPassword !== false ? $envPassword : '');
+}
 
 class Database
 {
@@ -35,10 +50,15 @@ class Database
         } catch (PDOException $e) {
             error_log('[NambutApp] Database connection failed: ' . $e->getMessage());
             throw new RuntimeException(
-                'Koneksi database gagal. Pastikan MySQL/MariaDB aktif dan konfigurasi database sudah benar.'
+                'Koneksi database gagal. Pastikan MySQL/MariaDB aktif, extension PDO MySQL tersedia, database peminjaman sudah diimpor, dan kredensial di config/database.local.php benar.'
             );
         }
 
         return self::$pdo;
+    }
+
+    public static function disconnect()
+    {
+        self::$pdo = null;
     }
 }

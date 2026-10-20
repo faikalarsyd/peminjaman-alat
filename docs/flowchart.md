@@ -1,10 +1,10 @@
 # Flowchart / Pseudocode
 
 ## Login
-Mulai → form login → validasi email/password → ambil user + role → `password_verify()` dan status Aktif? → Ya: buat session dan dashboard → Tidak: notifikasi gagal.
+Mulai → form login → validasi email/password → ambil user dan role → `password_verify()` dan status Aktif? → Ya: buat session dan tampilkan dashboard → Tidak: tampilkan notifikasi gagal.
 
 ## Peminjaman
-Pilih alat → isi jumlah/tanggal/keperluan → `sp_ajukan_peminjaman` → cek stok → stok kurang: rollback/error → stok cukup: insert peminjaman + detail → status MENUNGGU → commit → Petugas approval → trigger mengurangi stok.
+Pilih alat → isi jumlah, jam pinjam, jam rencana kembali, dan keperluan → validasi input serta stok → mulai transaksi database → buat peminjaman dan detail → status MENUNGGU → commit → Admin/Petugas menyetujui → stok berkurang secara atomik.
 
 ## Pengembalian dan denda
-Pilih transaksi aktif → isi tanggal/kondisi → `fn_hitung_denda()` → pengembalian MENUNGGU → Petugas proses → trigger menambah stok → peminjaman DIKEMBALIKAN.
+Pilih transaksi aktif → isi jam pengembalian dan kondisi → hitung keterlambatan serta denda per jam → buat pengajuan pengembalian → Admin/Petugas memproses → stok dikembalikan secara atomik → status peminjaman menjadi DIKEMBALIKAN.

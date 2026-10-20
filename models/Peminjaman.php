@@ -103,7 +103,7 @@ class Peminjaman
         if ($detail['jumlah'] < 1) {
             throw new RuntimeException('Jumlah alat harus lebih dari 0.');
         }
-        if ($d['tanggal_kembali_rencana'] < $d['tanggal_pinjam']) {
+        if (strtotime($d['tanggal_kembali_rencana']) < strtotime($d['tanggal_pinjam'])) {
             throw new RuntimeException('Tanggal kembali tidak boleh sebelum tanggal pinjam.');
         }
 
@@ -194,7 +194,7 @@ class Peminjaman
 
     public function syncOverdue()
     {
-        $this->db->exec("UPDATE peminjaman SET status='TERLAMBAT' WHERE status IN ('DISETUJUI','DIPINJAM') AND tanggal_kembali_rencana<CURDATE()");
+        $this->db->exec("UPDATE peminjaman SET status='TERLAMBAT' WHERE status IN ('DISETUJUI','DIPINJAM') AND tanggal_kembali_rencana<NOW()");
     }
 
     public function overdue(): int
@@ -209,7 +209,7 @@ class Peminjaman
         if (!in_array($status, array('MENUNGGU', 'DISETUJUI', 'DITOLAK'), true)) {
             $status = 'MENUNGGU';
         }
-        if ($d['tanggal_kembali_rencana'] < $d['tanggal_pinjam']) {
+        if (strtotime($d['tanggal_kembali_rencana']) < strtotime($d['tanggal_pinjam'])) {
             throw new RuntimeException('Tanggal kembali tidak boleh sebelum tanggal pinjam.');
         }
 
@@ -249,7 +249,7 @@ class Peminjaman
     {
         $allowed = array('MENUNGGU', 'DISETUJUI', 'DITOLAK');
         $newStatus = in_array($d['status'], $allowed, true) ? $d['status'] : 'MENUNGGU';
-        if ($d['tanggal_kembali_rencana'] < $d['tanggal_pinjam']) {
+        if (strtotime($d['tanggal_kembali_rencana']) < strtotime($d['tanggal_pinjam'])) {
             throw new RuntimeException('Tanggal kembali tidak boleh sebelum tanggal pinjam.');
         }
 

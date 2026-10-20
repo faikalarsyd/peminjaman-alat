@@ -1,1 +1,23 @@
-<?php $title='Register';require __DIR__.'/../layouts/header.php';?><div class="auth-page"><div class="auth-card"><div class="auth-brand"><svg class="brand-mark" viewBox="0 0 64 64" fill="none" stroke="var(--primary)" stroke-width="5"><path d="M32 5 55 18v27L32 58 9 45V18L32 5Z"/><path d="m9 18 23 14 23-14M32 32v26"/></svg><h1>Nambut<span>App</span></h1><p>Silahkan daftar untuk membuat akun</p></div><?php if($error):?><div class="alert"><?=e($error)?></div><?php endif;?><form class="auth-form" method="post"><input type="hidden" name="_csrf" value="<?=csrf_token()?>"><div class="field"><label>Nama Lengkap</label><input class="input" name="nama" placeholder="masukan nama lengkap" value="<?=old('nama')?>" required></div><div class="field"><label>Username</label><input class="input" name="username" placeholder="masukan username" value="<?=old('username')?>" required></div><div class="field"><label>Email</label><input class="input" type="email" name="email" placeholder="masukan email anda" value="<?=old('email')?>" required></div><div class="field"><label>Password</label><div class="password-wrap"><input class="input" id="regpass" type="password" name="password" placeholder="masukan password anda" required><button class="toggle-pass" type="button" data-toggle-password="regpass">◉</button></div></div><div class="field"><label>Konfirmasi Password</label><div class="password-wrap"><input class="input" id="confirm" type="password" name="confirm" placeholder="ulangi password anda" required><button class="toggle-pass" type="button" data-toggle-password="confirm">◉</button></div></div><button class="btn btn-primary" type="submit" style="width:100%;font-size:18px">↪ &nbsp;Daftar</button></form><div class="auth-footer">sudah punya akun? <a class="link" href="<?=base_url('login')?>">masuk sekarang</a></div></div></div></body></html>
+<?php $title='Daftar';require __DIR__.'/../layouts/header.php';?>
+<div class="auth-page">
+    <section class="auth-card" aria-labelledby="authTitle">
+        <div class="auth-brand">
+            <div class="auth-mark" aria-hidden="true">A</div>
+            <h1 id="authTitle">AlatQU</h1>
+            <p>Buat akun baru</p>
+        </div>
+        <?php if($error):?><div class="alert" role="alert"><?=e($error)?></div><?php endif;?>
+        <form class="auth-form" method="post">
+            <input type="hidden" name="_csrf" value="<?=csrf_token()?>">
+            <div class="field"><label for="nama">Nama lengkap</label><input class="input" id="nama" name="nama" placeholder="Nama lengkap" value="<?=old('nama')?>" autocomplete="name" required></div>
+            <div class="field"><label for="username">Username</label><input class="input" id="username" name="username" placeholder="Username" value="<?=old('username')?>" autocomplete="username" required></div>
+            <div class="field"><label for="email">Email</label><input class="input" id="email" type="email" name="email" placeholder="nama@email.com" value="<?=old('email')?>" autocomplete="email" required></div>
+            <div class="field"><label for="regpass">Password</label><div class="password-wrap"><input class="input" id="regpass" type="password" name="password" placeholder="Buat password" autocomplete="new-password" required><button class="toggle-pass" type="button" data-toggle-password="regpass" aria-label="Tampilkan atau sembunyikan password">◉</button></div></div>
+            <div class="field"><label for="confirm">Konfirmasi password</label><div class="password-wrap"><input class="input" id="confirm" type="password" name="confirm" placeholder="Ulangi password" autocomplete="new-password" required><button class="toggle-pass" type="button" data-toggle-password="confirm" aria-label="Tampilkan atau sembunyikan konfirmasi password">◉</button></div></div>
+            <button class="btn btn-primary" type="submit" style="width:100%">Buat akun</button>
+        </form>
+        <div class="auth-footer">Sudah punya akun? <a class="link" href="<?=base_url('login')?>">Masuk</a></div>
+    </section>
+</div>
+</body>
+</html>

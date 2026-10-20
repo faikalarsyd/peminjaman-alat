@@ -39,13 +39,20 @@ class PeminjamanController
         require_role('peminjam');
         $alat = (new Alat($this->db))->all(100, 0, trim(isset($_GET['q']) ? $_GET['q'] : ''));
         $error = null;
+        $startTime = date('H:i');
+        $endTime = date('H:i', strtotime('+1 hour'));
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             verify_csrf();
+            $startTime = trim(isset($_POST['tanggal_pinjam']) ? (string)$_POST['tanggal_pinjam'] : '');
+            $endTime = trim(isset($_POST['tanggal_kembali_rencana']) ? (string)$_POST['tanggal_kembali_rencana'] : '');
+            $startTime = valid_time_value($startTime) ? substr($startTime, 0, 5) : $startTime;
+            $endTime = valid_time_value($endTime) ? substr($endTime, 0, 5) : $endTime;
+            $today = date('Y-m-d');
             $d = array(
                 'user_id' => current_user()['id'],
-                'tanggal_pinjam' => isset($_POST['tanggal_pinjam']) ? $_POST['tanggal_pinjam'] : date('Y-m-d'),
-                'tanggal_kembali_rencana' => isset($_POST['tanggal_kembali_rencana']) ? $_POST['tanggal_kembali_rencana'] : '',
+                'tanggal_pinjam' => time_on_date($startTime, $today),
+                'tanggal_kembali_rencana' => time_on_date($endTime, $today),
                 'keperluan' => trim(isset($_POST['keperluan']) ? $_POST['keperluan'] : ''),
                 'catatan' => trim(isset($_POST['catatan']) ? $_POST['catatan'] : ''),
             );
@@ -60,8 +67,13 @@ class PeminjamanController
             if ($detail['alat_id'] < 1 || $detail['jumlah'] < 1) {
                 $errors['alat'] = 'Alat dan jumlah wajib valid.';
             }
-            if ($d['tanggal_kembali_rencana'] !== '' && $d['tanggal_kembali_rencana'] < $d['tanggal_pinjam']) {
-                $errors['tanggal'] = 'Tanggal kembali tidak boleh sebelum tanggal pinjam.';
+            if (!valid_time_value($startTime)) {
+                $errors['tanggal_pinjam'] = 'Jam pinjam tidak valid. Gunakan format HH:MM.';
+            }
+            if (!valid_time_value($endTime)) {
+                $errors['tanggal_kembali_rencana'] = 'Jam rencana kembali tidak valid. Gunakan format HH:MM.';
+            } elseif (valid_time_value($startTime) && $endTime <= $startTime) {
+                $errors['tanggal'] = 'Jam kembali harus setelah jam pinjam pada hari yang sama.';
             }
 
             if (!$errors) {
@@ -95,14 +107,21 @@ class PeminjamanController
         $users = (new User($db))->all(200);
         $alat = (new Alat($db))->all(200);
         $error = null;
+        $startTime = isset($item['tanggal_pinjam']) ? date('H:i', strtotime($item['tanggal_pinjam'])) : date('H:i');
+        $endTime = isset($item['tanggal_kembali_rencana']) ? date('H:i', strtotime($item['tanggal_kembali_rencana'])) : date('H:i', strtotime('+1 hour'));
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             verify_csrf();
+            $startTime = trim(isset($_POST['tanggal_pinjam']) ? (string)$_POST['tanggal_pinjam'] : '');
+            $endTime = trim(isset($_POST['tanggal_kembali_rencana']) ? (string)$_POST['tanggal_kembali_rencana'] : '');
+            $startTime = valid_time_value($startTime) ? substr($startTime, 0, 5) : $startTime;
+            $endTime = valid_time_value($endTime) ? substr($endTime, 0, 5) : $endTime;
+            $referenceDate = isset($item['tanggal_pinjam']) ? date('Y-m-d', strtotime($item['tanggal_pinjam'])) : date('Y-m-d');
             $d = array(
                 'kode_peminjaman' => trim(isset($_POST['kode_peminjaman']) ? $_POST['kode_peminjaman'] : ''),
                 'user_id' => (int)(isset($_POST['user_id']) ? $_POST['user_id'] : 0),
-                'tanggal_pinjam' => isset($_POST['tanggal_pinjam']) ? $_POST['tanggal_pinjam'] : date('Y-m-d'),
-                'tanggal_kembali_rencana' => isset($_POST['tanggal_kembali_rencana']) ? $_POST['tanggal_kembali_rencana'] : '',
+                'tanggal_pinjam' => time_on_date($startTime, $referenceDate),
+                'tanggal_kembali_rencana' => time_on_date($endTime, $referenceDate),
                 'keperluan' => trim(isset($_POST['keperluan']) ? $_POST['keperluan'] : ''),
                 'catatan' => trim(isset($_POST['catatan']) ? $_POST['catatan'] : ''),
                 'status' => isset($_POST['status']) ? $_POST['status'] : 'MENUNGGU',
@@ -119,8 +138,13 @@ class PeminjamanController
             if ($d['user_id'] < 1 || (!$id && $detail['alat_id'] < 1) || (!$id && $detail['jumlah'] < 1)) {
                 $errors['data'] = 'Peminjam dan detail alat wajib valid.';
             }
-            if ($d['tanggal_kembali_rencana'] !== '' && $d['tanggal_kembali_rencana'] < $d['tanggal_pinjam']) {
-                $errors['tanggal'] = 'Tanggal kembali tidak boleh sebelum tanggal pinjam.';
+            if (!valid_time_value($startTime)) {
+                $errors['tanggal_pinjam'] = 'Jam pinjam tidak valid. Gunakan format HH:MM.';
+            }
+            if (!valid_time_value($endTime)) {
+                $errors['tanggal_kembali_rencana'] = 'Jam rencana kembali tidak valid. Gunakan format HH:MM.';
+            } elseif (valid_time_value($startTime) && $endTime <= $startTime) {
+                $errors['tanggal'] = 'Jam kembali harus setelah jam pinjam pada hari yang sama.';
             }
 
             if (!$errors) {

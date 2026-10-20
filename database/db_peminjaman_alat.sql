@@ -1,3 +1,7 @@
+-- INSTALLER PEMINJAMAN ALAT (MySQL/MariaDB)
+-- Catatan: impor ulang akan menghapus tabel aplikasi yang ada beserta datanya.
+-- Gunakan hanya untuk instalasi baru / reset database.
+
 CREATE DATABASE IF NOT EXISTS db_peminjaman_alat CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE db_peminjaman_alat;
 
@@ -65,9 +69,9 @@ CREATE TABLE peminjaman(
   id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   kode_peminjaman VARCHAR(40) NOT NULL UNIQUE,
   user_id INT UNSIGNED NOT NULL,
-  tanggal_pinjam DATE NOT NULL,
-  tanggal_kembali_rencana DATE NOT NULL,
-  tanggal_kembali_actual DATE NULL,
+  tanggal_pinjam DATETIME NOT NULL,
+  tanggal_kembali_rencana DATETIME NOT NULL,
+  tanggal_kembali_actual DATETIME NULL,
   keperluan TEXT NOT NULL,
   catatan TEXT,
   status ENUM('MENUNGGU','DISETUJUI','DITOLAK','DIPINJAM','DIKEMBALIKAN','TERLAMBAT') NOT NULL DEFAULT 'MENUNGGU',
@@ -99,8 +103,8 @@ CREATE TABLE detail_peminjaman(
 CREATE TABLE pengembalian(
   id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   peminjaman_id BIGINT UNSIGNED NOT NULL UNIQUE,
-  tanggal_pengembalian DATE NOT NULL,
-  terlambat_hari INT UNSIGNED NOT NULL DEFAULT 0,
+  tanggal_pengembalian DATETIME NOT NULL,
+  terlambat_jam INT UNSIGNED NOT NULL DEFAULT 0,
   denda DECIMAL(12,2) NOT NULL DEFAULT 0,
   kondisi_alat VARCHAR(100),
   catatan TEXT,
@@ -132,7 +136,7 @@ CREATE TABLE pengaturan(
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT INTO roles(nama_role) VALUES ('Admin'),('Petugas'),('Peminjam');
-INSERT INTO pengaturan(kunci,nilai,deskripsi) VALUES ('denda_per_hari','5000','Denda keterlambatan per hari dalam rupiah');
+INSERT INTO pengaturan(kunci,nilai,deskripsi) VALUES ('denda_per_jam','208.33','Denda keterlambatan per jam dalam rupiah');
 
 -- Data demo.
 USE db_peminjaman_alat;
@@ -142,18 +146,16 @@ INSERT INTO kategori(nama_kategori,deskripsi) VALUES ('Elektronik','Perangkat el
 INSERT INTO alat(kode_alat,nama_alat,kategori_id,deskripsi,kondisi,jumlah,jumlah_tersedia,lokasi,status) VALUES
 ('ALT-001','Proyektor Epson HD',1,'Proyektor untuk presentasi','Baik',3,3,'Gudang A','Tersedia'),('ALT-002','Laptop Lenovo',1,'Laptop kerja','Baik',5,4,'Gudang A','Tersedia'),('ALT-003','Kamera DSLR',4,'Kamera dokumentasi','Baik',2,1,'Studio','Tersedia'),('ALT-004','Tripod Kamera',4,'Tripod kamera','Baik',4,3,'Studio','Tersedia'),('ALT-005','Speaker Portable',4,'Speaker portable','Baik',3,3,'Studio','Tersedia'),('ALT-006','Microphone Wireless',4,'Mic wireless','Baik',5,5,'Studio','Tersedia'),('ALT-007','Kabel HDMI',1,'Kabel HDMI 5 meter','Baik',10,10,'Gudang A','Tersedia'),('ALT-008','Printer',2,'Printer dokumen','Baik',2,2,'Kantor','Tersedia'),('ALT-009','Scanner',2,'Scanner dokumen','Baik',2,2,'Kantor','Tersedia'),('ALT-010','Monitor 24 Inch',1,'Monitor kerja','Baik',4,4,'Gudang A','Tersedia'),('ALT-011','Keyboard',1,'Keyboard USB','Baik',10,10,'Gudang A','Tersedia'),('ALT-012','Mouse',1,'Mouse USB','Baik',10,10,'Gudang A','Tersedia'),('ALT-013','Whiteboard',2,'Papan tulis','Baik',3,3,'Kantor','Tersedia'),('ALT-014','Megaphone',5,'Megaphone lapangan','Baik',2,2,'Gudang B','Tersedia'),('ALT-015','Tenda',5,'Tenda kegiatan','Baik',4,4,'Gudang B','Tersedia'),('ALT-016','Kursi Lipat',2,'Kursi kegiatan','Baik',20,20,'Gudang B','Tersedia'),('ALT-017','Meja Lipat',2,'Meja kegiatan','Baik',10,10,'Gudang B','Tersedia'),('ALT-018','Extension Cable',1,'Kabel ekstensi','Baik',8,8,'Gudang A','Tersedia'),('ALT-019','Capture Card',4,'Capture card video','Baik',2,2,'Studio','Tersedia'),('ALT-020','Ring Light',4,'Lampu dokumentasi','Baik',3,3,'Studio','Tersedia');
 INSERT INTO peminjaman(kode_peminjaman,user_id,tanggal_pinjam,tanggal_kembali_rencana,tanggal_kembali_actual,keperluan,catatan,status,approved_by,approved_at) VALUES
-('DEMO-001',3,'2026-09-01','2026-09-20',NULL,'Presentasi sekolah','Data demo','DIPINJAM',2,'2026-09-01 09:00:00'),
-('DEMO-002',4,'2026-09-02','2026-09-18',NULL,'Dokumentasi kegiatan','Data demo','TERLAMBAT',2,'2026-09-02 09:00:00'),
-('DEMO-003',5,'2026-09-03','2026-09-25',NULL,'Produksi video','Data demo','DISETUJUI',2,'2026-09-03 09:00:00'),
-('DEMO-004',6,'2026-09-04','2026-09-08','2026-09-08','Rapat','Data demo','DIKEMBALIKAN',2,'2026-09-04 09:00:00'),
-('DEMO-005',7,'2026-09-05','2026-09-10',NULL,'Kegiatan lapangan','Data demo','DITOLAK',2,'2026-09-05 09:00:00'),
-('DEMO-006',3,'2026-09-06','2026-09-15',NULL,'Peminjaman demo','Data demo','MENUNGGU',NULL,NULL),
-('DEMO-007',4,'2026-09-07','2026-09-16',NULL,'Peminjaman demo','Data demo','MENUNGGU',NULL,NULL),
-('DEMO-008',5,'2026-09-08','2026-09-17',NULL,'Peminjaman demo','Data demo','MENUNGGU',NULL,NULL),
-('DEMO-009',6,'2026-09-09','2026-09-19',NULL,'Peminjaman demo','Data demo','MENUNGGU',NULL,NULL),
-('DEMO-010',7,'2026-09-10','2026-09-22',NULL,'Peminjaman demo','Data demo','MENUNGGU',NULL,NULL);
+('DEMO-001',3,'2026-09-01 09:00:00','2026-09-01 17:00:00',NULL,'Presentasi sekolah','Data demo','DIPINJAM',2,'2026-09-01 09:00:00'),
+('DEMO-002',4,'2026-09-02 09:00:00','2026-09-02 17:00:00',NULL,'Dokumentasi kegiatan','Data demo','TERLAMBAT',2,'2026-09-02 09:00:00'),
+('DEMO-003',5,'2026-09-03 09:00:00','2026-09-03 17:00:00',NULL,'Produksi video','Data demo','DISETUJUI',2,'2026-09-03 09:00:00'),
+('DEMO-004',6,'2026-09-04 09:00:00','2026-09-04 17:00:00','2026-09-04 16:30:00','Rapat','Data demo','DIKEMBALIKAN',2,'2026-09-04 09:00:00'),
+('DEMO-005',7,'2026-09-05 09:00:00','2026-09-05 17:00:00',NULL,'Kegiatan lapangan','Data demo','DITOLAK',2,'2026-09-05 09:00:00'),
+('DEMO-006',3,'2026-09-06 09:00:00','2026-09-06 17:00:00',NULL,'Peminjaman demo','Data demo','MENUNGGU',NULL,NULL),
+('DEMO-007',4,'2026-09-07 09:00:00','2026-09-07 17:00:00',NULL,'Peminjaman demo','Data demo','MENUNGGU',NULL,NULL),
+('DEMO-008',5,'2026-09-08 09:00:00','2026-09-08 17:00:00',NULL,'Peminjaman demo','Data demo','MENUNGGU',NULL,NULL),
+('DEMO-009',6,'2026-09-09 09:00:00','2026-09-09 17:00:00',NULL,'Peminjaman demo','Data demo','MENUNGGU',NULL,NULL),
+('DEMO-010',7,'2026-09-10 09:00:00','2026-09-10 17:00:00',NULL,'Peminjaman demo','Data demo','MENUNGGU',NULL,NULL);
 INSERT INTO detail_peminjaman(peminjaman_id,alat_id,jumlah,kondisi_saat_pinjam,kondisi_saat_kembali,catatan) VALUES
 (1,2,1,'Baik',NULL,'Demo aktif'),(2,3,1,'Baik',NULL,'Demo terlambat'),(3,4,1,'Baik',NULL,'Demo disetujui'),(4,5,1,'Baik','Baik','Demo selesai'),(5,6,1,'Baik',NULL,'Demo ditolak'),(6,7,1,'Baik',NULL,'Demo menunggu'),(7,8,1,'Baik',NULL,'Demo menunggu'),(8,9,1,'Baik',NULL,'Demo menunggu'),(9,10,1,'Baik',NULL,'Demo menunggu'),(10,11,1,'Baik',NULL,'Demo menunggu');
-INSERT INTO pengembalian(peminjaman_id,tanggal_pengembalian,terlambat_hari,denda,kondisi_alat,catatan,diproses_oleh,status) VALUES(4,'2026-09-08',0,0,'Baik','Dikembalikan sesuai jadwal',2,'SELESAI');
-
--- Fitur SQL lanjutan tersedia di database/advanced_features.sql dan tidak diperlukan oleh runtime PHP.
+INSERT INTO pengembalian(peminjaman_id,tanggal_pengembalian,terlambat_jam,denda,kondisi_alat,catatan,diproses_oleh,status) VALUES(4,'2026-09-04 16:30:00',0,0,'Baik','Dikembalikan sesuai jadwal',2,'SELESAI');

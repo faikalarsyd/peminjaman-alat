@@ -1,119 +1,90 @@
 # NambutApp — Aplikasi Peminjaman Alat
 
-Aplikasi peminjaman alat berbasis PHP Native + PDO + MySQL/MariaDB, dirancang agar satu folder yang sama dapat dijalankan di **XAMPP laptop maupun AWeb Server Android**.
+Aplikasi peminjaman alat berbasis PHP Native, PDO, MySQL/MariaDB, HTML, CSS, dan JavaScript. Paket yang sama dapat dijalankan melalui XAMPP di komputer maupun AWeb Server di Android.
 
-## Yang sudah diperbaiki
+## Perbaikan kompatibilitas
 
-- URL aplikasi memakai `index.php?route=...`, jadi **tidak bergantung pada mod_rewrite**.
-- `database/database.sql` sekarang menjadi **installer tunggal**: database + tabel + data demo.
-- Runtime transaksi memakai **PDO murni** dan transaksi database (`BEGIN/COMMIT/ROLLBACK`), sehingga aplikasi tidak wajib bergantung pada stored procedure/trigger.
-- Alur approval mengurangi stok secara atomik.
-- Alur pengembalian mengembalikan stok secara atomik dan menghitung denda.
-- Error database dan error aplikasi tidak menampilkan stack trace/raw exception kepada pengguna.
-- Upload foto divalidasi dan folder upload diblokir dari eksekusi PHP.
-- Password tidak disimpan ke session.
-- Halaman 404 dan 500 disediakan.
+- Memisahkan konfigurasi aplikasi (`config/config.php`) dari koneksi database (`config/database.php`), sehingga kelas `Database` tidak dideklarasikan dua kali.
+- Menggunakan satu installer database, yaitu `peminjaman.sql`, berisi database, seluruh tabel, relasi, pengaturan, dan data contoh.
+- Navigasi menggunakan `index.php?route=...`; URL tidak membutuhkan `mod_rewrite` atau `.htaccess`.
+- Koneksi database memakai PDO MySQL, prepared statements, dan transaksi untuk operasi stok/peminjaman.
+- Durasi peminjaman dan perhitungan keterlambatan menggunakan jam. Contoh input: 07:50 sampai 12:00 pada hari yang sama.
+- Upload foto dibatasi ke tipe gambar yang diizinkan dan maksimal 2 MB.
 
-## Requirement
+## Kebutuhan
 
 - PHP 7.0 atau lebih baru.
-- Extension PHP: **PDO** dan **PDO_MySQL** untuk koneksi ke MySQL/MariaDB.
-- MySQL 5.7+/MariaDB yang mendukung InnoDB dan utf8mb4.
-- Apache atau web server lain. `.htaccess` hanya bonus; aplikasi tetap dapat berjalan tanpa rewrite.
+- Ekstensi PHP `PDO` dan `pdo_mysql` aktif.
+- MySQL atau MariaDB aktif.
+- Browser modern.
 
-## Instalasi XAMPP
+## Instalasi di XAMPP
 
 1. Ekstrak folder `peminjaman-alat` ke `C:\xampp\htdocs\`.
-2. Jalankan **Apache** dan **MySQL**.
-3. Buka phpMyAdmin.
-4. Import **`database/database.sql` satu kali**.
+2. Jalankan Apache dan MySQL dari XAMPP Control Panel.
+3. Buka phpMyAdmin, lalu pilih menu **Import**.
+4. Impor file `peminjaman.sql` yang berada di root folder project.
 5. Buka `http://localhost/peminjaman-alat/`.
 
-Konfigurasi default:
+Konfigurasi bawaan database: host `127.0.0.1`, port `3306`, database `db_peminjaman_alat`, user `root`, password kosong. Ini cocok untuk konfigurasi XAMPP standar. Bila konfigurasi MySQL berbeda, ikuti bagian **Mengatur koneksi database**.
 
-- Host: `127.0.0.1`
-- Port: `3306`
-- Database: `db_peminjaman_alat`
-- User: `root`
-- Password: kosong
+## Instalasi di AWeb Server (Android)
 
-Bila MySQL memakai password atau port berbeda, buat file `config/database.local.php` berdasarkan `config/database.local.example.php`.
+1. Ekstrak seluruh folder project ke direktori web/document root yang digunakan AWeb Server.
+2. Pastikan server PHP dan layanan MySQL/MariaDB aktif. PHP harus menyediakan ekstensi `PDO` dan `pdo_mysql`.
+3. Buka pengelola database yang tersedia di perangkat, pilih fitur import, lalu impor file `peminjaman.sql`.
+4. Bila host atau kredensial MySQL di Android berbeda dari konfigurasi bawaan, buat file `config/database.local.php` seperti dijelaskan di bawah.
+5. Buka alamat HTTP project dari browser. Gunakan halaman `index.php`/folder project, bukan membuka file PHP melalui `file://`.
 
-## Instalasi AWeb Server
+> AWeb Server dan paket server Android tidak selalu menyediakan MySQL/MariaDB atau ekstensi `pdo_mysql` secara otomatis. Jika database tidak dapat tersambung, pastikan layanan database berjalan dan ekstensi tersebut aktif; aplikasi PHP tidak dapat menyimpan data tanpa database yang dapat diakses.
 
-1. Ekstrak seluruh folder `peminjaman-alat` ke document root AWeb Server.
-2. Pastikan PHP dan MySQL/MariaDB AWeb aktif.
-3. Buat/import database **`database/database.sql`** melalui phpMyAdmin/AWeb database manager.
-4. Bila credential database berbeda, buat `config/database.local.php`.
-5. Buka alamat folder project pada browser.
+## Mengatur koneksi database
 
-Aplikasi menggunakan URL berbentuk `index.php?route=...`, jadi **tidak perlu mengandalkan fitur rewrite** untuk navigasi utama.
+Salin `config/database.local.example.php` menjadi `config/database.local.php`, lalu ubah nilai sesuai lingkungan server. Contoh konfigurasi standar:
+
+```php
+<?php
+define('DB_HOST', '127.0.0.1');
+define('DB_PORT', '3306');
+define('DB_NAME', 'db_peminjaman_alat');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+```
+
+Pada XAMPP default biasanya password `root` kosong. Jangan memakai password contoh ini bila server Anda memakai password lain. File `database.local.php` bersifat lokal dan tidak wajib dibuat bila konfigurasi default sudah sesuai.
 
 ## Akun demo
 
-- Admin — `admin@gmail.com` / `admin123`
-- Petugas — `petugas@gmail.com` / `petugas123`
-- Peminjam — `user@gmail.com` / `user123`
-- Peminjam tambahan — `user2@gmail.com` / `user234`, `user3@gmail.com` / `user345`, dst.
+| Peran | Email | Password |
+|---|---|---|
+| Admin | `admin@gmail.com` | `admin123` |
+| Petugas | `petugas@gmail.com` | `petugas123` |
+| Peminjam | `user@gmail.com` | `user123` |
 
-## Role
+Ganti password akun demo sebelum aplikasi dipakai dengan data nyata.
 
-**Admin:** kelola pengguna, kategori, alat, peminjaman, pengembalian, log, laporan, pengaturan.
+## Fitur utama
 
-**Petugas:** melihat alat, menyetujui/menolak peminjaman, memproses pengembalian, melihat laporan.
+**Admin:** mengelola pengguna, kategori, alat, peminjaman, pengembalian, log aktivitas, dan tarif denda per jam.
 
-**Peminjam:** melihat alat, membuat peminjaman, melihat riwayat, mengajukan pengembalian.
+**Petugas:** melihat data alat, menyetujui/menolak peminjaman, memproses pengembalian, dan melihat laporan.
 
-## Database
+**Peminjam:** melihat alat, membuat pengajuan peminjaman, melihat riwayat, dan mengajukan pengembalian.
 
-### Import untuk menjalankan aplikasi
+## Database tunggal
 
-**Cukup import:** `database/database.sql`
+Gunakan **hanya `peminjaman.sql`** untuk instalasi baru. File ini membuat database `db_peminjaman_alat`, tabel dan foreign key yang dibutuhkan aplikasi, nilai awal denda per jam, serta data demo. Mengimpor ulang file ini akan menghapus tabel aplikasi beserta datanya sebelum membuat ulang skema, jadi jangan impor ulang pada database yang berisi data penting.
 
-File ini sudah membuat ulang database dari awal dan memasukkan data demo.
+Durasi pada formulir menggunakan jam `HH:MM`, sedangkan tanggal disimpan bersama waktunya di database. Pemakaian yang dibuat dari formulir peminjam memakai tanggal hari ini dan jam kembali harus lebih besar daripada jam pinjam pada hari yang sama. Denda menghitung setiap jam keterlambatan yang sudah dimulai sebagai satu jam.
 
-### File SQL akademik
+## Jika masih muncul error
 
-- `database/function.sql` — function denda versi lama/terpisah.
-- `database/stored_procedure.sql` — stored procedure untuk dokumentasi tugas.
-- `database/trigger.sql` — trigger guard/stok versi dokumentasi tugas.
-- `database/advanced_features.sql` — kumpulan function/procedure/trigger yang dapat diimport setelah database utama bila diperlukan untuk demonstrasi tugas.
-- `database/seed.sql` — hanya data demo.
-- `database/all_in_one.sql` — installer inti + data demo tanpa ketergantungan runtime terhadap routine SQL.
+- **Koneksi database gagal:** periksa apakah MySQL/MariaDB hidup, nama database benar, dan file `config/database.local.php` sesuai.
+- **Driver MySQL tidak tersedia:** aktifkan ekstensi `pdo_mysql` pada konfigurasi PHP yang digunakan server web.
+- **Halaman kosong / error 500:** lihat log error PHP/Apache; pastikan semua file project diekstrak utuh.
+- **CSS tidak tampil:** akses project melalui HTTP dari web server dan pastikan folder `assets` ikut diekstrak.
+- **Foto gagal diunggah:** pastikan `uploads/alat` bisa ditulisi oleh PHP dan gambar kurang dari 2 MB.
 
-**Runtime PHP tidak memanggil `CALL ...` lagi.** Ini sengaja dilakukan agar aplikasi tetap berjalan walaupun konfigurasi AWeb/XAMPP tidak mengaktifkan stored routine tertentu.
+## Struktur proyek
 
-## Struktur
-
-`assets/`, `controllers/`, `models/`, `views/`, `config/`, `helpers/`, `uploads/`, `database/`, `docs/`, `index.php`, `router.php`, `.htaccess`.
-
-## Troubleshooting
-
-### “Not Found” saat membuka menu
-
-Gunakan URL utama folder project. Navigasi internal sudah menggunakan `index.php?route=...` dan tidak membutuhkan rewrite.
-
-### “Koneksi database gagal”
-
-Pastikan MySQL/MariaDB hidup dan cek `config/database.local.php` bila credential/port tidak default.
-
-### Halaman tampil tetapi CSS tidak ada
-
-Pastikan folder `assets` ikut diekstrak dan project dibuka melalui URL web server, bukan file lokal `file://`.
-
-### Upload foto gagal
-
-Pastikan folder `uploads/alat` dapat ditulisi oleh web server. Ukuran maksimal foto 2 MB.
-
-## Pengujian minimum
-
-1. Login Admin.
-2. Tambah/ubah kategori.
-3. Tambah/ubah alat.
-4. Register/login Peminjam.
-5. Peminjam ajukan peminjaman.
-6. Admin/Petugas menyetujui; stok berkurang.
-7. Peminjam ajukan pengembalian.
-8. Admin/Petugas memproses; stok kembali dan transaksi berubah menjadi `DIKEMBALIKAN`.
-9. Cek laporan dan log.
-10. Uji ulang project pada XAMPP dan AWeb dengan `database/database.sql` yang sama.
+`assets/`, `config/`, `controllers/`, `helpers/`, `models/`, `views/`, `uploads/`, `index.php`, `router.php`, dan `peminjaman.sql`.

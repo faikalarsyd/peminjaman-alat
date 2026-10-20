@@ -1,4 +1,4 @@
-<?php $title='NambutApp';require __DIR__.'/../layouts/header.php';require __DIR__.'/../layouts/navbar.php';require __DIR__.'/../layouts/sidebar.php';?>
+<?php $title='AlatQU';require __DIR__.'/../layouts/header.php';require __DIR__.'/../layouts/navbar.php';require __DIR__.'/../layouts/sidebar.php';?>
 <main class="content">
 <div class="page-head"><h1>Bantuan</h1><p>Panduan singkat penggunaan</p></div><div class="card"><ol><li>Login sesuai akun dan role.</li><li>Admin mengelola user, kategori, dan alat.</li><li>Peminjam memilih alat lalu mengajukan peminjaman.</li><li>Petugas memeriksa dan menyetujui pengajuan.</li><li>Peminjam mengajukan pengembalian, kemudian petugas memprosesnya.</li><li>Denda dihitung otomatis berdasarkan keterlambatan dan tarif di pengaturan.</li></ol></div>
 </main><?php require __DIR__.'/../layouts/footer.php';?>

@@ -1,1 +1,22 @@
-<?php $title='Login';require __DIR__.'/../layouts/header.php';?><div class="auth-page"><div class="auth-card"><div class="auth-brand"><svg class="brand-mark" viewBox="0 0 64 64" fill="none" stroke="var(--primary)" stroke-width="5"><path d="M32 5 55 18v27L32 58 9 45V18L32 5Z"/><path d="m9 18 23 14 23-14M32 32v26"/></svg><h1>Nambut<span>App</span></h1><p>Silahkan masuk untuk melanjutkan</p></div><?php if($error):?><div class="alert"><?=e($error)?></div><?php endif;?><?php if($m=flash('success')):?><div class="alert success"><?=e($m)?></div><?php endif;?><form class="auth-form" method="post"><input type="hidden" name="_csrf" value="<?=csrf_token()?>"><div class="field"><label>Email</label><input class="input" type="email" name="email" placeholder="masukan email anda" required></div><div class="field"><label>Password</label><div class="password-wrap"><input class="input" id="password" type="password" name="password" placeholder="masukan password anda" required><button class="toggle-pass" type="button" data-toggle-password="password">◉</button></div></div><div class="remember"><label class="check"><input type="checkbox" name="remember"> <span>ingat saya</span></label><a class="link" href="#" onclick="alert('Fitur reset password dapat dikembangkan selanjutnya.');return false">lupa password?</a></div><button class="btn btn-primary" type="submit" style="width:100%;font-size:18px">↪ &nbsp;Masuk</button></form><div class="auth-footer">Belum punya akun? <a class="link" href="<?=base_url('register')?>">Daftar sekarang</a></div></div></div></body></html>
+<?php $title='Masuk';require __DIR__.'/../layouts/header.php';?>
+<div class="auth-page">
+    <section class="auth-card" aria-labelledby="authTitle">
+        <div class="auth-brand">
+            <div class="auth-mark" aria-hidden="true">A</div>
+            <h1 id="authTitle">AlatQU</h1>
+            <p>Masuk untuk melanjutkan</p>
+        </div>
+        <?php if($error):?><div class="alert" role="alert"><?=e($error)?></div><?php endif;?>
+        <?php if($m=flash('success')):?><div class="alert success" role="status"><?=e($m)?></div><?php endif;?>
+        <form class="auth-form" method="post">
+            <input type="hidden" name="_csrf" value="<?=csrf_token()?>">
+            <div class="field"><label for="email">Email</label><input class="input" id="email" type="email" name="email" placeholder="nama@email.com" autocomplete="username" required></div>
+            <div class="field"><label for="password">Password</label><div class="password-wrap"><input class="input" id="password" type="password" name="password" placeholder="Masukkan password" autocomplete="current-password" required><button class="toggle-pass" type="button" data-toggle-password="password" aria-label="Tampilkan atau sembunyikan password">◉</button></div></div>
+            <div class="remember"><label class="check"><input type="checkbox" name="remember"><span>Ingat saya</span></label><a class="link" href="#" onclick="alert('Fitur reset password dapat dikembangkan selanjutnya.');return false">Lupa password?</a></div>
+            <button class="btn btn-primary" type="submit" style="width:100%">Masuk</button>
+        </form>
+        <div class="auth-footer">Belum punya akun? <a class="link" href="<?=base_url('register')?>">Daftar</a></div>
+    </section>
+</div>
+</body>
+</html>

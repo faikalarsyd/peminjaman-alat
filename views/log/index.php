@@ -1,4 +1,4 @@
-<?php $title='NambutApp';require __DIR__.'/../layouts/header.php';require __DIR__.'/../layouts/navbar.php';require __DIR__.'/../layouts/sidebar.php';?>
+<?php $title='AlatQU';require __DIR__.'/../layouts/header.php';require __DIR__.'/../layouts/navbar.php';require __DIR__.'/../layouts/sidebar.php';?>
 <main class="content">
 <div class="page-head"><h1>Log Aktivitas</h1><p>Riwayat aktivitas pengguna</p></div><div class="card"><div class="table-wrap"><table class="table"><thead><tr><th>USER</th><th>AKTIVITAS</th><th>MODUL</th><th>IP ADDRESS</th><th>WAKTU</th></tr></thead><tbody><?php foreach($logs as $l):?><tr><td><?=e($l['nama'])?></td><td><?=e($l['aktivitas'])?></td><td><?=e($l['modul'])?></td><td><?=e($l['ip_address'])?></td><td><?=e($l['created_at'])?></td></tr><?php endforeach;?></tbody></table></div></div>
 </main><?php require __DIR__.'/../layouts/footer.php';?>

@@ -1,21 +1,16 @@
 # Dokumentasi Program
 
 ## Analisis kebutuhan
-Tiga role: Admin, Petugas, Peminjam. Fitur mengikuti tabel fitur pada Paket 1: login/logout; CRUD user/alat/kategori/transaksi untuk Admin; approval, pemantauan return dan laporan untuk Petugas; daftar alat, pengajuan pinjam dan pengembalian untuk Peminjam.
+Tiga role: Admin, Petugas, dan Peminjam. Admin mengelola pengguna, alat, kategori, dan transaksi; Petugas melakukan persetujuan/pemantauan peminjaman dan pengembalian serta melihat laporan; Peminjam melihat alat, mengajukan pinjaman, dan mengajukan pengembalian.
 
 ## Arsitektur MVC
-**View → Controller → Model → Database**. View tidak menjalankan query SQL; Controller memproses request/otorisasi/validasi; Model menangani akses data.
+**View → Controller → Model → Database**. View menampilkan halaman; Controller memproses request, otorisasi, dan validasi; Model menangani akses data menggunakan PDO.
 
-## Fungsi/procedure/method database
-- `fn_hitung_denda(rencana, actual, tarif)` mengembalikan denda keterlambatan.
-- `sp_ajukan_peminjaman` mengecek stok dan membuat header/detail dengan transaction.
-- `sp_setujui_peminjaman` mengecek stok terkunci dan mengubah status; trigger menangani pengurangan stok.
-- `sp_proses_pengembalian` menghitung denda dan membuat return request.
-- `sp_laporan_peminjaman` menyediakan dataset laporan.
-- Trigger menjaga perubahan stok pada approval/return.
+## Database
+Impor satu file `peminjaman.sql`. File ini membuat database `db_peminjaman_alat`, sembilan tabel, relasi foreign key, nilai awal `denda_per_jam`, dan data contoh. Aplikasi tidak membutuhkan stored procedure atau trigger untuk menjalankan transaksi; alur stok dan transaksi ditangani oleh model PHP dengan prepared statements dan transaksi database.
 
 ## Keamanan
-PDO prepared statements, password hashing, password verification, session, CSRF token, role authorization, output escaping, validasi upload dan pembatasan ukuran file.
+PDO prepared statements, password hashing, password verification, session, CSRF token, otorisasi berbasis role, output escaping, validasi unggahan, dan pembatasan ukuran file.
 
 ## Perhitungan denda
-`hari_terlambat = max(DATEDIFF(actual, rencana), 0)` dan `denda = hari_terlambat × denda_per_hari`. Tarif default seed: Rp5.000/hari dan dapat diubah Admin melalui Pengaturan.
+`jam_terlambat = max(ceil((actual - rencana) dalam detik / 3600), 0)` dan `denda = jam_terlambat × denda_per_jam`. Keterlambatan yang belum mencapai satu jam penuh tetap dihitung satu jam. Tarif awal Rp208,33 per jam dan dapat diubah Admin melalui Pengaturan.

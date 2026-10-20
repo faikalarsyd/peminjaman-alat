@@ -35,18 +35,25 @@ class PengembalianController
 
         $loans = (new Peminjaman($this->db))->all(current_user()['id']);
         $error = null;
+        $returnTime = date('H:i');
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             verify_csrf();
+            $returnTime = trim(isset($_POST['tanggal_pengembalian']) ? (string)$_POST['tanggal_pengembalian'] : '');
+            if (valid_time_value($returnTime)) {
+                $returnTime = substr($returnTime, 0, 5);
+            }
             $d = array(
                 'peminjaman_id' => (int)(isset($_POST['peminjaman_id']) ? $_POST['peminjaman_id'] : 0),
-                'tanggal_pengembalian' => isset($_POST['tanggal_pengembalian']) ? $_POST['tanggal_pengembalian'] : date('Y-m-d'),
+                'tanggal_pengembalian' => valid_time_value($returnTime) ? time_on_date($returnTime, date('Y-m-d')) : '',
                 'kondisi_alat' => trim(isset($_POST['kondisi_alat']) ? $_POST['kondisi_alat'] : ''),
                 'catatan' => trim(isset($_POST['catatan']) ? $_POST['catatan'] : ''),
                 'diproses_oleh' => current_user()['id'],
                 'request_user_id' => current_user()['id'],
                 'status' => 'MENUNGGU',
             );
-            if ($d['peminjaman_id'] < 1 || !$d['kondisi_alat']) {
+            if (!valid_time_value($returnTime)) {
+                $error = 'Jam pengembalian tidak valid. Gunakan format HH:MM.';
+            } elseif ($d['peminjaman_id'] < 1 || !$d['kondisi_alat']) {
                 $error = 'Transaksi dan kondisi alat wajib diisi.';
             } else {
                 try {
@@ -72,15 +79,23 @@ class PengembalianController
             return;
         }
         $error = null;
+        $returnTime = isset($item['tanggal_pengembalian']) ? date('H:i', strtotime($item['tanggal_pengembalian'])) : date('H:i');
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             verify_csrf();
+            $returnTime = trim(isset($_POST['tanggal_pengembalian']) ? (string)$_POST['tanggal_pengembalian'] : '');
+            if (valid_time_value($returnTime)) {
+                $returnTime = substr($returnTime, 0, 5);
+            }
+            $returnDate = isset($item['tanggal_pengembalian']) ? date('Y-m-d', strtotime($item['tanggal_pengembalian'])) : date('Y-m-d');
             $d = array(
                 'peminjaman_id' => (int)(isset($_POST['peminjaman_id']) ? $_POST['peminjaman_id'] : 0),
-                'tanggal_pengembalian' => isset($_POST['tanggal_pengembalian']) ? $_POST['tanggal_pengembalian'] : date('Y-m-d'),
+                'tanggal_pengembalian' => valid_time_value($returnTime) ? time_on_date($returnTime, $returnDate) : '',
                 'kondisi_alat' => trim(isset($_POST['kondisi_alat']) ? $_POST['kondisi_alat'] : ''),
                 'catatan' => trim(isset($_POST['catatan']) ? $_POST['catatan'] : ''),
             );
-            if ($d['peminjaman_id'] < 1 || !$d['kondisi_alat']) {
+            if (!valid_time_value($returnTime)) {
+                $error = 'Jam pengembalian tidak valid. Gunakan format HH:MM.';
+            } elseif ($d['peminjaman_id'] < 1 || !$d['kondisi_alat']) {
                 $error = 'Transaksi dan kondisi alat wajib diisi.';
             } else {
                 try {

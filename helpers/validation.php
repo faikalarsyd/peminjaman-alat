@@ -60,3 +60,52 @@ function validate_date_range(string $from, string $to)
     }
     return $from <= $to ? null : 'Tanggal awal tidak boleh melebihi tanggal akhir.';
 }
+
+
+/** Convert HTML datetime-local values into MySQL DATETIME values. */
+function normalize_datetime_local(string $value): string
+{
+    $value = trim(str_replace('T', ' ', $value));
+    if ($value === '') {
+        return '';
+    }
+    // datetime-local controls normally submit YYYY-MM-DDTHH:MM.
+    if (preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/', $value)) {
+        $value .= ':00';
+    }
+    return $value;
+}
+
+function valid_datetime_value(string $value): bool
+{
+    if (!preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $value)) {
+        return false;
+    }
+    $date = DateTime::createFromFormat('!Y-m-d H:i:s', $value);
+    $errors = DateTime::getLastErrors();
+    return $date !== false
+        && ($errors === false || ((int)$errors['warning_count'] === 0 && (int)$errors['error_count'] === 0))
+        && $date->format('Y-m-d H:i:s') === $value;
+}
+
+
+/** Validate an HTML time input (HH:MM, optionally HH:MM:SS). */
+function valid_time_value(string $value): bool
+{
+    return preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d)?$/', trim($value)) === 1;
+}
+
+/** Convert a time-only input to a DATETIME while retaining dates in the database. */
+function time_on_date(string $time, string $date): string
+{
+    $time = trim($time);
+    if (!valid_time_value($time)) {
+        return '';
+    }
+    if (strlen($time) === 5) {
+        $time .= ':00';
+    } elseif (strlen($time) > 8) {
+        return '';
+    }
+    return $date . ' ' . $time;
+}
