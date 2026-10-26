@@ -57,7 +57,7 @@ Pada XAMPP default biasanya password `root` kosong. Jangan memakai password cont
 
 | Peran | Email | Password |
 |---|---|---|
-| Admin | `admin@gmail.com` | `admin123` |
+| Admin | `ikall321@gmail.com` | `admin123` |
 | Petugas | `petugas@gmail.com` | `petugas123` |
 | Peminjam | `user@gmail.com` | `user123` |
 
