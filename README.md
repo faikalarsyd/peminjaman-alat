@@ -1,4 +1,4 @@
-# NambutApp — Aplikasi Peminjaman Alat
+# AlatQU — Aplikasi Peminjaman Alat
 
 Aplikasi peminjaman alat berbasis PHP Native, PDO, MySQL/MariaDB, HTML, CSS, dan JavaScript. Paket yang sama dapat dijalankan melalui XAMPP di komputer maupun AWeb Server di Android.
 
