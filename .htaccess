@@ -1,0 +1,11 @@
+Options -MultiViews
+RewriteEngine On
+
+# Project tetap dapat berjalan tanpa mod_rewrite karena semua link aplikasi
+# memakai index.php?route=.... Aturan ini hanya bonus agar URL bersih juga bisa dibuka.
+RewriteRule ^(?:assets|uploads)/ - [L,NC]
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+RewriteRule ^$ index.php?route=dashboard [QSA,L]
+RewriteRule ^(.+)$ index.php?route=$1 [QSA,L]

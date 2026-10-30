@@ -1,0 +1,1 @@
+<?php $title='Akses Ditolak';require __DIR__.'/../layouts/header.php';?><div class="auth-page"><div class="auth-card" style="text-align:center"><div class="modal-icon">ⓘ</div><h1>Akses Ditolak</h1><p><?=e($message??'Anda tidak memiliki akses ke halaman ini.')?></p><a class="btn btn-primary" href="<?=base_url('dashboard')?>">Kembali ke Dashboard</a></div></div></body></html>

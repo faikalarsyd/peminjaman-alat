@@ -1,0 +1,2 @@
+<?php
+class LogAktivitas { private $db; public function __construct(PDO $db) { $this->db = $db; } public function add(int$userId,string$aktivitas,string$modul){$s=$this->db->prepare('INSERT INTO log_aktivitas(user_id,aktivitas,modul,ip_address) VALUES(?,?,?,?)');$s->execute([$userId,$aktivitas,$modul,$_SERVER['REMOTE_ADDR']??'CLI']);} public function all():array{$s=$this->db->query('SELECT l.*,u.nama FROM log_aktivitas l JOIN users u ON u.id=l.user_id ORDER BY l.id DESC LIMIT 200');return$s->fetchAll();} }
