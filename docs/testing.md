@@ -15,6 +15,7 @@
 | 11 | Akses admin | Peminjam buka `/users` | 403 | Isi setelah uji XAMPP | Siap diuji |
 | 12 | CRUD kategori | Tambah/edit/hapus | Data berubah | Isi setelah uji XAMPP | Siap diuji |
 | 13 | CRUD user | Tambah/edit/hapus | Data berubah | Isi setelah uji XAMPP | Siap diuji |
+<<<<<<< HEAD
 
 ## Pengujian tambahan untuk perbaikan role dan pengembalian
 
@@ -24,3 +25,5 @@
 | 15 | Penolakan petugas | Login sebagai Petugas, pilih transaksi MENUNGGU, tekan Tolak | Status menjadi DITOLAK dan stok tidak berubah | Belum diuji pada database aktif | Siap diuji |
 | 16 | Pengembalian oleh admin | Login sebagai Admin, pilih transaksi aktif, Catat Pengembalian, isi waktu dan kondisi | Pengembalian menjadi SELESAI, peminjaman menjadi DIKEMBALIKAN, stok bertambah sesuai jumlah pinjaman | Belum diuji pada database aktif | Siap diuji |
 | 17 | Penyelesaian pengajuan peminjam | Login Admin/Petugas, buka Pengembalian, tekan Selesaikan pada data MENUNGGU | Pengembalian menjadi SELESAI, peminjaman menjadi DIKEMBALIKAN, stok bertambah satu kali | Belum diuji pada database aktif | Siap diuji |
+=======
+>>>>>>> 05c5d7a4318d906e8f5f87021cd60d448560638f

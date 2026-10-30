@@ -28,8 +28,12 @@ class PengembalianController
     public function create()
     {
         if (has_role('admin')) {
+<<<<<<< HEAD
             $selectedLoanId = isset($_GET['loan_id']) ? (int)$_GET['loan_id'] : 0;
             $this->adminForm(null, $selectedLoanId);
+=======
+            $this->adminForm();
+>>>>>>> 05c5d7a4318d906e8f5f87021cd60d448560638f
             return;
         }
         require_role('peminjam');
@@ -70,7 +74,11 @@ class PengembalianController
         require __DIR__ . '/../views/pengembalian/detail.php';
     }
 
+<<<<<<< HEAD
     public function adminForm($id = null, int $selectedLoanId = 0)
+=======
+    public function adminForm($id = null)
+>>>>>>> 05c5d7a4318d906e8f5f87021cd60d448560638f
     {
         require_role('admin');
         $item = $id ? $this->model->find($id) : null;
@@ -79,6 +87,7 @@ class PengembalianController
             require __DIR__ . '/../views/info/404.php';
             return;
         }
+<<<<<<< HEAD
         if ($id && $item['status'] !== 'MENUNGGU') {
             flash('error', 'Pengembalian yang sudah selesai tidak dapat diubah.');
             redirect('pengembalian');
@@ -95,6 +104,8 @@ class PengembalianController
             $selectedLoanId = (int)$_POST['peminjaman_id'];
         }
 
+=======
+>>>>>>> 05c5d7a4318d906e8f5f87021cd60d448560638f
         $error = null;
         $returnTime = isset($item['tanggal_pengembalian']) ? date('H:i', strtotime($item['tanggal_pengembalian'])) : date('H:i');
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -118,6 +129,7 @@ class PengembalianController
                 try {
                     if ($id) {
                         $this->model->update($id, $d);
+<<<<<<< HEAD
                         (new LogAktivitas($this->db))->add(current_user()['id'], 'Mengubah data pengembalian', 'Pengembalian');
                         flash('success', 'Data pengembalian berhasil diperbarui.');
                         redirect('pengembalian');
@@ -137,12 +149,23 @@ class PengembalianController
 
                     (new LogAktivitas($this->db))->add(current_user()['id'], 'Mencatat dan menyelesaikan pengembalian', 'Pengembalian');
                     flash('success', 'Pengembalian berhasil diselesaikan. Stok alat dan status peminjaman sudah diperbarui.');
+=======
+                    } else {
+                        $d['diproses_oleh'] = current_user()['id'];
+                        $this->model->create($d);
+                    }
+                    flash('success', 'Data pengembalian berhasil disimpan.');
+>>>>>>> 05c5d7a4318d906e8f5f87021cd60d448560638f
                     redirect('pengembalian');
                 } catch (Throwable $e) {
                     $error = $e->getMessage();
                 }
             }
         }
+<<<<<<< HEAD
+=======
+        $loans = (new Peminjaman($this->db))->all();
+>>>>>>> 05c5d7a4318d906e8f5f87021cd60d448560638f
         require __DIR__ . '/../views/pengembalian/admin_form.php';
     }
 

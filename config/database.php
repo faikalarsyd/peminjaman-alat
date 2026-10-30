@@ -26,7 +26,11 @@ if (!defined('DB_USER')) {
 }
 if (!defined('DB_PASS')) {
     $envPassword = getenv('DB_PASS');
+<<<<<<< HEAD
     define('DB_PASS', $envPassword !== false ? $envPassword : 'root');
+=======
+    define('DB_PASS', $envPassword !== false ? $envPassword : '');
+>>>>>>> 05c5d7a4318d906e8f5f87021cd60d448560638f
 }
 
 class Database

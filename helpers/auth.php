@@ -55,13 +55,21 @@ function has_role($roles): bool
 {
     $roles = (array)$roles;
     $current = current_user();
+<<<<<<< HEAD
     $currentRole = is_array($current) && isset($current['role']) ? strtolower(trim((string)$current['role'])) : '';
+=======
+    $currentRole = is_array($current) && isset($current['role']) ? strtolower((string)$current['role']) : '';
+>>>>>>> 05c5d7a4318d906e8f5f87021cd60d448560638f
 
     if ($currentRole === '') {
         return false;
     }
 
+<<<<<<< HEAD
     $roles = array_map(static function ($role) { return strtolower(trim((string)$role)); }, $roles);
+=======
+    $roles = array_map('strtolower', $roles);
+>>>>>>> 05c5d7a4318d906e8f5f87021cd60d448560638f
     return in_array($currentRole, $roles, true);
 }
 

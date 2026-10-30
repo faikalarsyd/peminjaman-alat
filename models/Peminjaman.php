@@ -28,6 +28,7 @@ class Peminjaman
         return $s->fetchAll();
     }
 
+<<<<<<< HEAD
     /**
      * Daftar transaksi aktif yang belum memiliki data pengembalian.
      * $existingReturnId dipakai saat mengedit pengajuan pengembalian agar
@@ -63,6 +64,8 @@ class Peminjaman
         return $s->fetchAll();
     }
 
+=======
+>>>>>>> 05c5d7a4318d906e8f5f87021cd60d448560638f
     public function find(int $id)
     {
         $s = $this->db->prepare('SELECT p.*,u.nama nama_peminjam,u.email FROM peminjaman p JOIN users u ON u.id=p.user_id WHERE p.id=?');
